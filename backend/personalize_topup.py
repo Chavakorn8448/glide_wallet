@@ -15,7 +15,7 @@ def calculate_personalize_top_up():
     """
     cursor.execute(query)
     top_up_history = [row[0] for row in cursor.fetchall()]
-    print(top_up_history)
+    # print(top_up_history)
 
     avg_top_up = sum(top_up_history) / len(top_up_history)
     threshold = 4 * avg_top_up
@@ -27,18 +27,7 @@ def calculate_personalize_top_up():
         WHERE transaction_type IN ('transfer', 'pay', 'scan')
         ORDER BY transaction_date DESC;
     """)
-    # transactions = cursor.fetchall()
 
-    # cumulative_sum = 0
-    # limited_transactions = []
-
-    # for row in transactions:
-    #     amount = row[0]
-    #     if cumulative_sum + amount < threshold:
-    #         cumulative_sum += amount
-    #         limited_transactions.append(amount)
-    #     else:
-    #         break
     expense_transactions = [row[0] for row in cursor.fetchall()]
 
     # Step 3: Find multiple closest sums using get_closest_sum function
@@ -59,11 +48,7 @@ def calculate_personalize_top_up():
     total_closest_sum = sum(closest_sums)
     avg_accumulated = total_closest_sum / len(closest_sums)
 
-    return {
-        "avg_top_up": avg_top_up,
-        "closest_sums": closest_sums,
-        "avg_accumulated (personalized top up value)": avg_accumulated
-    }
+    return avg_accumulated
 
 
 def get_closest_sum(expense_transactions, avg_top_up, start_index):
@@ -98,5 +83,4 @@ def get_closest_sum(expense_transactions, avg_top_up, start_index):
 
     return closest_sum, next_index
 
-
-print(calculate_personalize_top_up())
+print("personalized top up: ", calculate_personalize_top_up())
