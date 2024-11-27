@@ -35,7 +35,7 @@ def calculate_personalize_top_up():
     start_index = 0
 
     for _ in range(4):  # Repeat 4 times
-        closest_sum, start_index = get_closest_sum(expense_transactions, avg_top_up, start_index)
+        closest_sum, start_index = get_closest_sum_only_higher(expense_transactions, avg_top_up, start_index)
         closest_sums.append(closest_sum)
 
         if start_index >= len(expense_transactions):
@@ -82,5 +82,41 @@ def get_closest_sum(expense_transactions, avg_top_up, start_index):
             break
 
     return closest_sum, next_index
+
+def get_closest_sum_only_higher(expense_transactions, avg_top_up, start_index):
+    """
+    Finds the closest sum that is higher than or equal to avg_top_up
+    from the given transactions starting from start_index.
+
+    Args:
+        expense_transactions (list): List of transaction amounts.
+        avg_top_up (float): The average top-up amount.
+        start_index (int): The index to start searching from.
+
+    Returns:
+        tuple: A tuple containing the closest sum and the next starting index.
+    """
+    closest_sum = 0
+    min_diff = float('inf')
+    current_sum = 0
+    next_index = start_index
+
+    for i in range(start_index, len(expense_transactions)):
+        current_sum += expense_transactions[i]
+        # Ensure the current_sum is greater than or equal to avg_top_up
+        if current_sum >= avg_top_up:
+            diff = abs(current_sum - avg_top_up)
+
+            if diff < min_diff:
+                min_diff = diff
+                closest_sum = current_sum
+                next_index = i + 1  # Set next_index to the next transaction
+
+            # Stop adding if we find the closest higher sum
+            if diff == 0:
+                break
+
+    return closest_sum, next_index
+
 
 print("personalized top up: ", calculate_personalize_top_up())
